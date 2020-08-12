@@ -1,3 +1,3 @@
 # Pragmatic prediction in the processing of referring expressions containing quantifiers
 
-Self-paced reading experiment part of a study by Macuch-Silva & Franke.
+Files pertaining to the study by Macuch-Silva & Franke.
