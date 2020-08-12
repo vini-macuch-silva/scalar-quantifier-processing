@@ -1,0 +1,72 @@
+---
+title: "Pragmatic prediction in the processing of referring expressions containing quantifiers - Diagnostic plots (statistical analyses)"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(forcats)
+library(fields)
+library(factoextra)
+source("C:/Users/vinim/Documents/MEGA/Documents/PhD/Year-1/Pilot/pragmatic_spr-master/02_spr_pilot_minimal/results/rscripts/helpers.R")
+library(brms)
+library(bayesplot)
+options(mc.cores = parallel::detectCores ())
+library(ggpubr)
+
+RT_SHAPE_ALL <- readRDS("RT_SHAPE_ALL.RDS")
+
+RT_SHAPE_SOME <- readRDS("RT_SHAPE_SOME.RDS")
+```
+
+***
+
+Here we present a series of model diagnostics for each of our fitted statistical models. We present both trace plots and central posterior uncertainty intervals for each respective model. The shaded areas in the latter represent the 70% and 95% uncertainty intervals. 
+ 
+```{r fig.align='center', echo=FALSE, warning=FALSE}
+
+posterior_SHAPE_SOME <- as.array(RT_SHAPE_SOME)
+
+color_scheme_set("red")
+t <- ggtitle("Einige")
+post_some <- mcmc_areas(
+  posterior_SHAPE_SOME,
+  pars = c("b_logConEinigeUnbiased", "b_logConEinigeInfelict", "b_logConEinigeFalse"),
+  prob = 0.7,
+  prob_outer = 0.95,
+  point_est = "mean"
+) +
+  scale_y_discrete(labels = c('Einige (Unbiased)', 'Einige (Infelict)', 'Einige (False)')) +
+  t
+
+posterior_SHAPE_ALL <- as.array(RT_SHAPE_ALL)
+
+color_scheme_set("red")
+t <- ggtitle("Alle")
+post_all <- mcmc_areas(
+  posterior_SHAPE_ALL,
+  pars = c("b_logConAlleUnbiased", "b_logConAlleFalse"),
+  prob = 0.7,
+  prob_outer = 0.95,
+  point_est = "mean"
+) +
+  scale_y_discrete(labels = c('Alle (Unbiased)', 'Alle (False)')) +
+  t
+
+ggarrange(post_all, post_some, nrow = 2)
+
+np_SHAPE_SOME <- nuts_params(RT_SHAPE_SOME)
+
+color_scheme_set("mix-brightblue-gray")
+t <- ggtitle("Einige")
+mcmc_trace(posterior_SHAPE_SOME, pars = c("b_Intercept", "b_logConEinigeUnbiased", "b_logConEinigeInfelict", "b_logConEinigeFalse"), np = np_SHAPE_SOME) +
+  t
+
+np_SHAPE_ALL <- nuts_params(RT_SHAPE_ALL)
+
+color_scheme_set("mix-brightblue-gray")
+t <- ggtitle("Alle")
+mcmc_trace(posterior_SHAPE_ALL, pars = c("b_Intercept", "b_logConAlleUnbiased", "b_logConAlleFalse"), np = np_SHAPE_ALL, facet_args = list(ncol = 2)) +
+  t
+
+```
