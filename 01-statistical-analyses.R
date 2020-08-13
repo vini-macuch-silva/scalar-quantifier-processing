@@ -13,12 +13,12 @@ d <- read_csv("./data/results-25-11.csv")
 # Check number of data points per participant
 # table(d$submission_id, d$trial_number)
 
-# Remove incomplete submissions
+# Remove incomplete submissions and practice trials
 d <- d %>% 
   filter(submission_id != 7950, submission_id != 7954) %>% 
   filter(trial_name != "practice_task_three")
 
-# Convert variable trial_type to factor
+# Convert variable 'trial_type' to factor
 d$trial_type <- as.factor(d$trial_type)
 
 # Clean data set
@@ -29,7 +29,7 @@ d2 <- d %>%
   gather(Region, RT, -submission_id, -quantifier, -picture_type, -condition, -response, -listNumber,
          -trial_number, -picture, -trial_name)
 
-# Convert 'Region' variable to factor
+# Convert variable 'Region' to factor
 d2$Region = factor(x = d2$Region,
                    levels = c("QUANT", "der", "SHAPE", "auf",
                               "dem", "Bild", "sind", "CRIT_3", "der_1",
@@ -41,7 +41,7 @@ d2$quantifier <- as.factor(d2$quantifier)
 d2$condition <- as.factor(d2$condition)
 
 # Check for outliers
-# Check for outlier trials (= RT larger/ less than 2.5 SD of the mean)
+# Check for outlier trials (= RTs larger/ smaller than 2.5 SD of the mean)
 # Check for outlier participants (= total number of outlier trials larger than a third of all trials)
 d2 <- d2 %>% group_by(Region, quantifier, condition) %>%
   mutate(outlier_trial = RT < (mean(RT) - 2.5*sd(RT)) | RT > (mean(RT) + 2.5*sd(RT)) ) %>%
@@ -84,6 +84,7 @@ d2Logic$picture <- str_sub(d2Logic$picture, end = -5)
 # Filter unique item labels
 picture_levels <- sort(unique(d2Logic$picture))
 
+# Save unique item labels as levels of the variable 'picture'
 levels(d2Logic$picture) <- picture_levels
 
 # Reorder levels of variable 'logCon'
