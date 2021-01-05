@@ -12,7 +12,8 @@ ci.high <- function(x,na.rm=T) {
   quantile(bootstrap(1:length(x),1000,theta,x,na.rm=na.rm)$thetastar,.975,na.rm=na.rm) - mean(x,na.rm=na.rm)}
 
 
-d <- read_csv("results-25-11-fixed.csv", locale = locale(encoding = 'ISO-8859-1'))
+# d <- read_csv("results-25-11-fixed.csv", locale = locale(encoding = 'ISO-8859-1'))
+d <- read_csv("results-25-11.csv", locale = locale(encoding = 'ISO-8859-1'))
 
 d2 <- d %>%
   filter(trial_type == "dropdown_sentence_completion") %>% 
