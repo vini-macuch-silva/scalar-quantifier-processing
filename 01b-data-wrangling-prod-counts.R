@@ -69,14 +69,23 @@ data_prod_homhet <- data_prod %>%
 
 
 # focus on the 'het-het' condition
+
+index_first_object <- sample(
+  c(1,2), 
+  size = nrow(data_prod %>% filter(condition == "het-het")),
+  replace = T
+)
+
 data_prod_hethet <- data_prod %>% 
   filter(condition == "het-het") %>% 
   mutate(
-    first_shape    = map_chr(str_split(choice_options_2, "\\|"), function(i) i[1]),
-    first_property = map_chr(str_split(choice_options_3, "\\|"), function(i) i[1]),
+    # first_shape    = map_chr(str_split(choice_options_2, "\\|"), function(i) i[1]),
+    # first_property = map_chr(str_split(choice_options_3, "\\|"), function(i) i[1]),
+    first_shape    = ifelse(index_first_object == 1, shape_1, shape_2),
+    first_property = ifelse(index_first_object == 1, "first", "second"),
     response_category_1 = ifelse(response_1 == "Alle", "all", "some"),
     response_category_2 = ifelse(response_2 == first_shape, "first", "second"),
-    response_category_3 = ifelse(response_3 == first_property, "first", "second"),
+    response_category_3 = ifelse(first_property == "first", "first", "second"),
     response_category_ex_1 = response_category_1,
     response_category_ex_2 = ifelse(response_category_2 == "first", "triangles", "circles"),
     response_category_ex_3 = ifelse(response_category_3 == "first", "black", "white"),
@@ -84,16 +93,9 @@ data_prod_hethet <- data_prod %>%
       response_category_1 == "some" ~ 'true',
       TRUE ~ 'false'
     )
-  ) %>% View()
+  ) %>% 
   select(-first_shape, -first_property)
 
-  data_prod %>% 
-    filter(condition == "het-het") %>% 
-    mutate(
-      t = map_chr(str_split(choice_options_2, "\\|"), function(i) i[1])
-    ) %>% pull(t) %>% table()
-  
-  
 # focus on the 'hom-hom' condition
 data_prod_homhom <- data_prod %>% 
   filter(condition == "hom-hom") %>% 
@@ -204,3 +206,5 @@ counts <- rbind(
   counts_sentence
 ) %>% 
   arrange(condition)
+
+View(counts)
